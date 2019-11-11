@@ -17,8 +17,7 @@ class Student
       FROM students
     SQL
 
-    rows = DB[:conn].execute(sql)
-    objects_from_rows(rows)
+    objects_from_sql(sql)
   end
 
   def self.all_students_in_grade_9
@@ -38,8 +37,7 @@ class Student
       WHERE grade < 12
     SQL
 
-    rows = DB[:conn].execute(sql)
-    objects_from_rows(rows)
+    objects_from_sql(sql)
   end
 
   def self.first_X_students_in_grade_10(num)
@@ -50,8 +48,7 @@ class Student
       LIMIT ?
     SQL
 
-    rows = DB[:conn].execute(sql, num)
-    objects_from_rows(rows)
+    objects_from_sql(sql, num)
   end
 
   def self.first_student_in_grade_10
@@ -62,8 +59,7 @@ class Student
       LIMIT 1
     SQL
 
-    row = DB[:conn].execute(sql)[0]
-    new_from_db(row)
+    objects_from_sql(sql)[0]
   end
 
   def self.all_students_in_grade_X(num)
@@ -73,8 +69,7 @@ class Student
       WHERE grade = ?
     SQL
 
-    rows = DB[:conn].execute(sql, num)
-    objects_from_rows(rows)
+    objects_from_sql(sql, num)
   end
 
   def self.find_by_name(name)
@@ -86,8 +81,7 @@ class Student
       WHERE name = ?
     SQL
 
-    student_row = DB[:conn].execute(sql, name)[0]
-    new_from_db(student_row)
+    objects_from_sql(sql, name)[0]
   end
   
   def save
@@ -118,5 +112,10 @@ class Student
 
   def self.objects_from_rows(rows)
     rows.map { |row| new_from_db(row) }
+  end
+
+  def self.objects_from_sql(sql, *args)
+    rows = DB[:conn].execute(sql, *args)
+    objects_from_rows(rows)
   end
 end
